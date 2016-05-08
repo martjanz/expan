@@ -1,0 +1,79 @@
+body {
+    font-family: Open Sans;
+}
+
+#chart {
+  background: #fff;
+  
+  font-size: 16px;
+  font-style: normal;
+  font-variant: small-caps;
+  font-weight: 400;
+  line-height: 14px;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+text {
+  pointer-events: none;
+}
+
+.grandparent text { /* header text */
+    font-weight: bold;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+}
+
+rect.parent,
+.grandparent rect {
+    stroke-width: 2px;
+}
+
+rect.parent {
+    pointer-events: none;
+}
+
+.grandparent rect {
+    fill: #ddd;
+}
+
+.grandparent:hover rect {
+    fill: #ee9700;
+}
+
+.children rect.parent,
+.grandparent rect {
+    cursor: pointer;
+}
+
+.children rect.parent {
+  fill: #bbb;
+  fill-opacity: .4;
+}
+
+.children:hover rect.child,
+.grandparent:hover rect {
+  fill: #bbb;
+}
+
+.ptext {
+    font-size: large;
+}
+
+.ctext {
+    font-size: small;
+}
+
+a[title]:hover:after {
+  content: attr(title);
+  position: absolute;
+}
