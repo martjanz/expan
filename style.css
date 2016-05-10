@@ -2,6 +2,19 @@ body {
     font-family: Open Sans;
 }
 
+.container-fluid {
+  padding-right: .9375rem;
+  padding-left: .9375rem;
+  padding-top: .9375rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.vertical-center {
+  display: flex;
+  align-items: center;
+}
+
 #chart {
   background: #fff;
   

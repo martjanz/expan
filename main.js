@@ -14,7 +14,7 @@ var defaults = {
 };
 
 defaults.width = $("#chart").innerWidth() - (defaults.margin.left + defaults.margin.right);
-defaults.height = $("#chart").innerWidth() * 0.5 - (defaults.margin.top + defaults.margin.bottom);
+defaults.height = $("#chart").innerWidth() * 0.48 - (defaults.margin.top + defaults.margin.bottom);
 
 formatNumber = d3.format(defaults.format);
 
@@ -49,7 +49,7 @@ function main(o, data) {
   var treemap = d3.layout.treemap()
 	  .children(function(d, depth) { return depth ? null : d._children; })
 	  .sort(function(a, b) { return a.value - b.value; })
-	  .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
+	  .ratio(height / width * 0.7 * (1 + Math.sqrt(5)))
 	  .round(false);
   
 	// Remove previous svg graph, if exists.
@@ -388,8 +388,8 @@ function main(o, data) {
 	}
 }
 
-if (window.location.hash === "") {
-	d3.csv("estructura-gastos-2012.csv", function(d) { // data conversion
+function load(datafile) {
+	d3.csv(datafile, function(d) { // data conversion
 		return {
 			division: d.division.toLowerCase(),
 			grupo: d.grupo.toLowerCase(),
@@ -408,9 +408,19 @@ if (window.location.hash === "") {
 			  .key(function(d) { return d.subclase; })
 			  .entries(res);
 
-			console.log(data);
-
 			main({title: ""}, {key: "Total", values: data});
 		}
 	});
 }
+
+if (window.location.hash === "") {
+	load("data/engh2012.csv");
+}
+
+$( document ).ready(function() {
+	$('#encuestas-radio .btn-secondary').on('click', function() {
+		value = $(this).find('input').attr('id');
+
+		load("data/" + value + ".csv");
+	});
+});

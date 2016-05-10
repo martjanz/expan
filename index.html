@@ -6,6 +6,8 @@ Based on http://bost.ocks.org/mike/treemap/
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
     <title>Expan v.0.1b</title>
      <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="lib/bootstrap.min.css">
@@ -14,10 +16,23 @@ Based on http://bost.ocks.org/mike/treemap/
 
 <body>
     <div class="container-fluid">
-        <h2>Estructura de gastos de consumo de los hogares 2012/2013</h2>
-        <div class="col-md-12" id="chart"></div>
+        <div class="row vertical-center" style="height: auto; width: auto;">
+	        <div id="encuestas-radio" class="btn-group col-xs-9" data-toggle="buttons">
+              <label class="btn btn-secondary">
+                <input type="radio" name="options" id="engh2004" autocomplete="off">ENGH 2004/05
+              </label>
+              <label class="btn btn-secondary active">
+			    <input type="radio" name="options" id="engh2012" autocomplete="off" checked>ENGHo 2012/13
+			  </label>
+			</div>
+			<div class="col-xs-12">
+				<h4 class="text-xs-right">Gastos de consumo de los hogares</h4>
+			</div>
+		</div>
+		<div class="col-md-12" id="chart">
+        </div>
         <div class="col-md-12">
-            <p><strong>Fuente: </strong><a href="http://www.indec.gob.ar/bases-de-datos.asp?solapa=4">Encuesta Nacional de Gastos de los Hogares 2012 - INDEC</a></p>
+            <p><strong>Fuente: </strong><a href="http://www.indec.gob.ar/bases-de-datos.asp?solapa=4">Encuestas Nacionales de Gastos de los Hogares - INDEC</a></p>
         </div>
     </div>
 
