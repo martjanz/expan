@@ -14,7 +14,7 @@ var defaults = {
 };
 
 defaults.width = $("#chart").innerWidth() - (defaults.margin.left + defaults.margin.right);
-defaults.height = $("#chart").innerWidth() * 0.48 - (defaults.margin.top + defaults.margin.bottom);
+defaults.height = window.innerHeight * .90 - (defaults.margin.top + defaults.margin.bottom);
 
 formatNumber = d3.format(defaults.format);
 
@@ -49,7 +49,7 @@ function main(o, data) {
   var treemap = d3.layout.treemap()
 	  .children(function(d, depth) { return depth ? null : d._children; })
 	  .sort(function(a, b) { return a.value - b.value; })
-	  .ratio(height / width * 0.7 * (1 + Math.sqrt(5)))
+	  .ratio(1) // height / width * 1 * (1 + Math.sqrt(2))
 	  .round(false);
   
 	// Remove previous svg graph, if exists.
