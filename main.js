@@ -389,24 +389,44 @@ function main(o, data) {
 }
 
 function load(datafile) {
+	// Warning: hardcode indicating amount of fields that are values, not keys.
+	var valueProps = 1;
+
 	d3.csv(datafile, function(d) { // data conversion
-		return {
-			division: d.division.toLowerCase(),
-			grupo: d.grupo.toLowerCase(),
-			clase: d.clase.toLowerCase(),
-			subclase: d.subclase.toLowerCase(),
-			key: d.articulo.toLowerCase(),
-			value: +d.porcentaje, // Convert string to number
-			monto: +d.monto
-		};
-	}, function(err, res) { // data nesting
+
+		data = {};
+
+		// Keep key properties
+		keyProps = Object.keys(d);
+		keyProps = keyProps.slice(0, keyProps.length - valueProps - 1);
+
+		// Nesting
+		keyProps.forEach(function(key) {
+			data[key] = d[key].toLowerCase();
+		});
+
+		data.key =  d.articulo.toLowerCase();
+		data.value = +d.porcentaje; // Convert string to number
+
+		return data;
+
+	}, function(err, res) { // data nesting		
 		if (!err) {
-			var data = d3.nest()
-			  .key(function(d) { return d.division; })
-			  .key(function(d) { return d.grupo; })
-			  .key(function(d) { return d.clase; })
-			  .key(function(d) { return d.subclase; })
-			  .entries(res);
+			var data = d3.nest();
+
+			// Get record sample to plan nesting operations
+			var sampleRecord = res[0];
+
+			// Keep key properties
+			keyProps = Object.keys(sampleRecord);
+			keyProps = keyProps.slice(0, keyProps.length - valueProps - 1);
+
+			// Nesting
+			keyProps.forEach(function(key) {
+				data.key(function(d) { return d[key]; });
+			});
+
+			data = data.entries(res);
 
 			main({title: ""}, {key: "Total", values: data});
 		}
