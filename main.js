@@ -13,8 +13,32 @@ var defaults = {
 	title: ""
 };
 
+// spinner settings
+var spinnerOpts = {
+	lines: 13 // The number of lines to draw
+	, length: 28 // The length of each line
+	, width: 14 // The line thickness
+	, radius: 42 // The radius of the inner circle
+	, scale: 0.5 // Scales overall size of the spinner
+	, corners: 1 // Corner roundness (0..1)
+	, color: '#eee' // #rgb or #rrggbb or array of colors
+	, opacity: 0.15 // Opacity of the lines
+	, rotate: 0 // The rotation offset
+	, direction: 1 // 1: clockwise, -1: counterclockwise
+	, speed: 1.4 // Rounds per second
+	, trail: 60 // Afterglow percentage
+	, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+	, zIndex: 2e9 // The z-index (defaults to 2000000000)
+	, className: 'spinner' // The CSS class to assign to the spinner
+	, top: '50%' // Top position relative to parent
+	, left: '50%' // Left position relative to parent
+	, shadow: true // Whether to render a shadow
+	, hwaccel: true // Whether to use hardware acceleration
+	, position: 'absolute' // Element positioning
+}
+
 defaults.width = $("#chart").innerWidth() - (defaults.margin.left + defaults.margin.right);
-defaults.height = $("#chart").innerWidth() * 0.48 - (defaults.margin.top + defaults.margin.bottom);
+defaults.height = window.innerHeight * .90 - (defaults.margin.top + defaults.margin.bottom);
 
 formatNumber = d3.format(defaults.format);
 
@@ -49,7 +73,7 @@ function main(o, data) {
   var treemap = d3.layout.treemap()
 	  .children(function(d, depth) { return depth ? null : d._children; })
 	  .sort(function(a, b) { return a.value - b.value; })
-	  .ratio(height / width * 0.7 * (1 + Math.sqrt(5)))
+	  .ratio(1) // height / width * 1 * (1 + Math.sqrt(2))
 	  .round(false);
   
 	// Remove previous svg graph, if exists.
@@ -388,25 +412,54 @@ function main(o, data) {
 	}
 }
 
+
+// spinner target selector
+var spinTarget =  document.getElementById('chart');
+
 function load(datafile) {
+	// Warning: hardcode indicating amount of fields that are values, not keys.
+	var valueProps = 1;
+
+	// spinner loader
+	var spinner = new Spinner(spinnerOpts).spin(spinTarget);
+
 	d3.csv(datafile, function(d) { // data conversion
-		return {
-			division: d.division.toLowerCase(),
-			grupo: d.grupo.toLowerCase(),
-			clase: d.clase.toLowerCase(),
-			subclase: d.subclase.toLowerCase(),
-			key: d.articulo.toLowerCase(),
-			value: +d.porcentaje, // Convert string to number
-			monto: +d.monto
-		};
-	}, function(err, res) { // data nesting
+		// stop the spinner
+        spinner.stop();
+
+		data = {};
+
+		// Keep key properties
+		keyProps = Object.keys(d);
+		keyProps = keyProps.slice(0, keyProps.length - valueProps - 1);
+
+		// Nesting
+		keyProps.forEach(function(key) {
+			data[key] = d[key].toLowerCase();
+		});
+
+		data.key =  d.articulo.toLowerCase();
+		data.value = +d.porcentaje; // Convert string to number
+
+		return data;
+
+	}, function(err, res) { // data nesting		
 		if (!err) {
-			var data = d3.nest()
-			  .key(function(d) { return d.division; })
-			  .key(function(d) { return d.grupo; })
-			  .key(function(d) { return d.clase; })
-			  .key(function(d) { return d.subclase; })
-			  .entries(res);
+			var data = d3.nest();
+
+			// Get record sample to plan nesting operations
+			var sampleRecord = res[0];
+
+			// Keep key properties
+			keyProps = Object.keys(sampleRecord);
+			keyProps = keyProps.slice(0, keyProps.length - valueProps - 1);
+
+			// Nesting
+			keyProps.forEach(function(key) {
+				data.key(function(d) { return d[key]; });
+			});
+
+			data = data.entries(res);
 
 			main({title: ""}, {key: "Total", values: data});
 		}
