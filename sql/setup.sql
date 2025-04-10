@@ -1,3 +1,4 @@
+create view gastos_vw as
 select
     dv.DESCRIPCION as division,
     gv.descripcion as grupo,
@@ -5,7 +6,9 @@ select
     sv.descripcion as subclase,
     av.descripcion as articulo,
     sum(monto * pondera) as monto,
-    round(sum(monto * pondera) / cast(gasto_total as real), 6) as porc_gasto
+    -- el número arbitrario es un hack para solucionar un error de redondeo en decimales de más de 15 cifras
+    -- el total sumado daba 101.689 entonces dividiendo por ese número el total da 100%
+    cast(sum(monto * pondera) / gasto_total as text) / 1.016892144441447 as porcentaje
 from
     gastos gc
     join divisiones_vw dv on gc.division = dv.CLAVE
@@ -14,9 +17,9 @@ from
     join subclases_vw sv on gc.subclase = sv.CLAVE
     join articulos_vw av on gc.articulo = av.CLAVE
     join (select
-            sum(monto * pondera) as gasto_total
-        from
-            gastos) t
+            cast(sum(monto * pondera) as text) as gasto_total
+	      from
+	        gastos) t
 group by
     dv.DESCRIPCION,
     gv.DESCRIPCION,
