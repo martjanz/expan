@@ -467,7 +467,7 @@ function load(datafile) {
 }
 
 if (window.location.hash === "") {
-	load("data/engh2012.csv");
+	load("data/engh2018.csv");
 }
 
 $( document ).ready(function() {
